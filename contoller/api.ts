@@ -1,5 +1,8 @@
+import "dotenv/config";
 import firebase from "../config/firebaseConfig";
 import UserModel from "../repository/userCollection";
+var jwt = require("jsonwebtoken");
+import { onSetValueRedis } from "./redisController";
 
 //Function CRUD from Firebase
 import {
@@ -11,6 +14,8 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 
 const db = getFirestore(firebase);
@@ -48,12 +53,55 @@ export const getUser = async (req: any, res: any, next: any) => {
 
     // Command to get user data from firebase
     const data = await getDoc(user);
-
     //   Condition check if data of specific user id exist or not
     if (data.exists()) {
       res.status(200).send(data.data());
     } else {
       res.status(404).send("user not found");
+    }
+  } catch (error: any) {
+    res.status(400).send(error.message);
+  }
+};
+
+export const login = async (req: any, res: any, next: any) => {
+  try {
+    // This id is as key used user
+    const body = req.body;
+    let objUser: object = {};
+
+    const queries = query(
+      collection(db, "user-data"),
+      where("email", "==", body.email)
+    );
+    // console.log(data)
+
+    // Command to get user data from firebase
+    const data = await getDocs(queries);
+
+    if (data.empty) {
+      res.status(400).send("No User Found");
+    } else {
+      data.forEach((val) => {
+        objUser = new UserModel(
+          val.data().name,
+          val.data().email,
+          val.data().password,
+          val.data().phone
+        );
+      });
+
+      //Generate Token Here for authentication
+      var token = jwt.sign({ ...objUser }, process.env.JWT_TOKEN_KEY, {
+        expiresIn: "1h",
+      });
+
+      onSetValueRedis("token", token);
+
+      res.status(200).send({
+        ...objUser,
+        token: token,
+      });
     }
   } catch (error: any) {
     res.status(400).send(error.message);
@@ -67,7 +115,7 @@ export const getAllUser = async (req: any, res: any, next: any) => {
     const userArr: any[] = [];
 
     if (data.empty) {
-      res.status(400).send("No User FOund");
+      res.status(400).send("No User Found");
     } else {
       data.forEach((val) => {
         const user = new UserModel(

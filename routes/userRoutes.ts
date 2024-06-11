@@ -1,11 +1,19 @@
 const router = require("express").Router();
 
-//Import Controller
-import { getUser, updateUser, getAllUser, addNewUser } from "../contoller/api";
+const isLoggedIn = require("../middleware/authMiddleware.ts");
 
-router.post("/addNewUser/", addNewUser);
-router.put("/updateUser/", updateUser);
-router.get("/getUser/", getUser);
-router.get("/getAllUser/", getAllUser);
+//Import Controller
+import {
+  getUser,
+  updateUser,
+  getAllUser,
+  addNewUser,
+  login,
+} from "../contoller/api";
+
+router.post("/addNewUser/", isLoggedIn, addNewUser);
+router.put("/updateUser/", isLoggedIn, updateUser);
+router.get("/getUser/", isLoggedIn, getUser);
+router.get("/getAllUser/", isLoggedIn, getAllUser);
 
 module.exports = router;

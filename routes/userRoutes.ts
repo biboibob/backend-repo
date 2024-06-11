@@ -1,13 +1,11 @@
 const router = require("express").Router();
 
 //Import Controller
-import { getUser, updateUser } from "../contoller/api";
+import { getUser, updateUser, getAllUser, addNewUser } from "../contoller/api";
 
-// router.get("/", (req: any, res: any) => {
-//   res.send("Hello User!");
-// });
-
-router.get("/updateUser/", updateUser);
-router.put("/getUser/", getUser);
+router.post("/addNewUser/", addNewUser);
+router.put("/updateUser/", updateUser);
+router.get("/getUser/", getUser);
+router.get("/getAllUser/", getAllUser);
 
 module.exports = router;

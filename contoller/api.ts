@@ -1,6 +1,6 @@
 import "dotenv/config";
 import firebase from "../config/firebaseConfig";
-import UserModel from "../repository/userCollection";
+import { User as UserModel, Login } from "../repository/userCollection";
 var jwt = require("jsonwebtoken");
 import { onSetValueRedis } from "./redisController";
 
@@ -72,7 +72,8 @@ export const login = async (req: any, res: any, next: any) => {
 
     const queries = query(
       collection(db, "user-data"),
-      where("email", "==", body.email)
+      where("email", "==", body.email),
+      where("password", "==", body.password)
     );
     // console.log(data)
 
@@ -83,12 +84,7 @@ export const login = async (req: any, res: any, next: any) => {
       res.status(400).send("No User Found");
     } else {
       data.forEach((val) => {
-        objUser = new UserModel(
-          val.data().name,
-          val.data().email,
-          val.data().password,
-          val.data().phone
-        );
+        objUser = new Login(val.data().email, val.data().password);
       });
 
       //Generate Token Here for authentication

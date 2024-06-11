@@ -4,6 +4,7 @@ var jwt = require("jsonwebtoken");
 const isLoggedIn = async (req: any, res: any, next: any) => {
   const tokenRedis = await onGetValueRedis("token");
   const header = req.headers["authorization"];
+  res.header("Access-Control-Allow-Origin", "*");
 
   //Split Header
   const bearer = header?.split(" ");

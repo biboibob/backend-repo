@@ -6,7 +6,7 @@ var cors = require("cors");
 import { corsOptions } from "..";
 
 const isLoggedIn = async (req: any, res: any, next: any) => {
-  cors()
+  cors(corsOptions)
   const tokenRedis = await onGetValueRedis("token");
   const header = req.headers["authorization"];
 

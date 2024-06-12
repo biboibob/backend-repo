@@ -1,7 +1,8 @@
 var cors = require("cors");
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = 3030;
+const functions = require("firebase-functions");
 
 // app.use(function (req:any, res:any, next:any) {
 //   // Website you wish to allow to connect
@@ -69,3 +70,6 @@ app.listen(port, () => {
 });
 
 module.exports = app;
+
+exports.api = functions.https.onRequest(app)
+ 

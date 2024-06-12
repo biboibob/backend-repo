@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.ts",
-    "deploy": "firebase deploy --only functions:api"
+    "deploy": "firebase emulators:start --only functions:api"
   },
   "keywords": [],
   "author": "",

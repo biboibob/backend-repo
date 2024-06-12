@@ -1,10 +1,15 @@
 import { onGetValueRedis } from "../contoller/redisController";
 var jwt = require("jsonwebtoken");
 
+//Cors Section
+var cors = require("cors");
+import { corsOptions } from "..";
+
 const isLoggedIn = async (req: any, res: any, next: any) => {
+  cors()
   const tokenRedis = await onGetValueRedis("token");
   const header = req.headers["authorization"];
-  res.header("Access-Control-Allow-Origin", "*");
+
 
   //Split Header
   const bearer = header?.split(" ");

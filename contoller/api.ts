@@ -16,6 +16,7 @@ import {
   deleteDoc,
   query,
   where,
+  or,
 } from "firebase/firestore";
 
 const db = getFirestore(firebase);
@@ -75,6 +76,7 @@ export const login = async (req: any, res: any, next: any) => {
       where("email", "==", body.email),
       where("password", "==", body.password)
     );
+
     // console.log(data)
 
     // Command to get user data from firebase
@@ -84,7 +86,12 @@ export const login = async (req: any, res: any, next: any) => {
       res.status(400).send("No User Found");
     } else {
       data.forEach((val) => {
-        objUser = new Login(val.data().email, val.data().password);
+        objUser = new Login(
+          val.id,
+          val.data().email,
+          val.data().name,
+          val.data().phone
+        );
       });
 
       //Generate Token Here for authentication
@@ -138,11 +145,25 @@ export const addNewUser = async (req: any, res: any, next: any) => {
 
     // const newUser = new UserModel(name, email, password, phone);
     // console.log(newUser);
-
     const body = req.body;
-    await addDoc(collection(db, "user-data"), body);
 
-    res.status(200).send(`New user successfully added - ${body?.name || ""}`);
+    const queries = query(
+      collection(db, "user-data"),
+      or(
+        where("email", "==", body.email),
+        where("name", "in", [`${body.name}`])
+      )
+    );
+
+    const dataUserExist = await getDocs(queries);
+
+    // If user not found, register can use current name and email
+    if (dataUserExist.empty) {
+      await addDoc(collection(db, "user-data"), body);
+      res.status(200).send(`New user successfully added - ${body?.name || ""}`);
+    } else {
+      res.status(400).send("Name or Email already used");
+    }
   } catch (error: any) {
     res.status(400).send(error.message);
   }

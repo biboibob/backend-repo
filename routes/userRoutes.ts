@@ -11,7 +11,8 @@ import {
   login,
 } from "../contoller/api";
 
-router.post("/addNewUser/", isLoggedIn, addNewUser);
+router.post("/addNewUser/", addNewUser);
+
 router.put("/updateUser/", isLoggedIn, updateUser);
 router.get("/getUser/", isLoggedIn, getUser);
 router.get("/getAllUser/", isLoggedIn, getAllUser);

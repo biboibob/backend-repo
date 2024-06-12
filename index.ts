@@ -3,10 +3,9 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
-// //session middleware
 // app.use(function (req:any, res:any, next:any) {
 //   // Website you wish to allow to connect
-//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   // res.setHeader("Access-Control-Allow-Origin", "*");
 
 //   // Request methods you wish to allow
 //   res.setHeader(
@@ -33,18 +32,33 @@ const port = 3000;
 //   next();
 // });
 
-const corsOptions = {
+var corsOptionsObj = function (req: any, res: any, next:any) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Content-Length, X-Requested-With"
+  );
+  next();
+};
+
+export const corsOptions = {
   credentials: true,
-  origin: ['http://localhost:3000', 'http://localhost:80', 'http://localhost:3001'] // Whitelist the domains you want to allow
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:80",
+    "http://localhost:3001",
+    "*",
+  ], 
 };
 
 app.use(cors(corsOptions)); // Use the cors middleware with your options
+// app.use(corsOptionsObj)
 app.use(express.json());
 
 //path API
 var userRoutes = require("./routes/userRoutes");
 var authRoutes = require("./routes/authRoutes");
-
 
 // Route
 app.use("/user", userRoutes);

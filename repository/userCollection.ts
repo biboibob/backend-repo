@@ -13,10 +13,14 @@ class User {
 
 class Login {
   email: string;
-  password: string;
-  constructor(email: string, password: string) {
+  name: string;
+  phone: number;
+  id: string;
+  constructor(id:string, email: string, name: string, phone: number) {
+    this.id = id;
     this.email = email;
-    this.password = password;
+    this.name = name;
+    this.phone = phone;
   }
 }
 
